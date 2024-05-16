@@ -43,6 +43,6 @@ void AAuraPlayerController::Move(const FInputActionValue &InputActionValue)
 	const FRotator CurrentYawRotation(0.0f, GetControlRotation().Yaw, 0.0f);
 	const FVector CurrentForwardDirection = FRotationMatrix(CurrentYawRotation).GetUnitAxis(EAxis::X);
 	const FVector CurrentRightDirection = FRotationMatrix(CurrentYawRotation).GetUnitAxis(EAxis::Y);
-	const FVector MovementDirection = CurrentForwardDirection * InputAxisVector.X + CurrentRightDirection * InputAxisVector.Y;
+	const FVector MovementDirection = CurrentForwardDirection * InputAxisVector.Y + CurrentRightDirection * InputAxisVector.X;
 	GetPawn()->AddMovementInput(MovementDirection.GetSafeNormal());
 }
