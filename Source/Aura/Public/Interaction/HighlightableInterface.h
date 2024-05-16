@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "IHighlightable.generated.h"
+#include "HighlightableInterface.generated.h"
 
 // This class does not need to be modified.
 UINTERFACE(MinimalAPI)
-class UIHighlightable : public UInterface
+class UHighlightableInterface : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -16,7 +16,7 @@ class UIHighlightable : public UInterface
 /**
  * 
  */
-class AURA_API IIHighlightable
+class AURA_API IHighlightableInterface
 {
 	GENERATED_BODY()
 

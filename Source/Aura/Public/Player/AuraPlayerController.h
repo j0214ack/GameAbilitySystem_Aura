@@ -6,6 +6,7 @@
 #include "GameFramework/PlayerController.h"
 #include "AuraPlayerController.generated.h"
 
+class IHighlightableInterface;
 struct FInputActionValue;
 class UInputMappingContext;
 class UInputAction;
@@ -21,6 +22,7 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
+	virtual void PlayerTick(float DeltaTime) override;
 
 private:
 	UPROPERTY(EditAnywhere, Category="Input")
@@ -31,4 +33,9 @@ private:
 
 	virtual void SetupInputComponent() override;
 	void Move(const FInputActionValue &InputActionValue);
+	void CursorTrace();
+	void Highlight(AActor* Target);
+
+	TScriptInterface<IHighlightableInterface> LastHighlightable;
+	TScriptInterface<IHighlightableInterface> CurrentHighlightable;
 };

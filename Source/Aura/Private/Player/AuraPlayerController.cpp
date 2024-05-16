@@ -4,6 +4,7 @@
 #include "Player/AuraPlayerController.h"
 #include "EnhancedInputSubsystems.h"
 #include "EnhancedInputComponent.h"
+#include "Interaction/HighlightableInterface.h"
 
 AAuraPlayerController::AAuraPlayerController()
 {
@@ -29,6 +30,13 @@ void AAuraPlayerController::BeginPlay()
 
 }
 
+void AAuraPlayerController::PlayerTick(float DeltaTime)
+{
+	Super::PlayerTick(DeltaTime);
+
+	CursorTrace();
+}
+
 void AAuraPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
@@ -45,4 +53,32 @@ void AAuraPlayerController::Move(const FInputActionValue &InputActionValue)
 	const FVector CurrentRightDirection = FRotationMatrix(CurrentYawRotation).GetUnitAxis(EAxis::Y);
 	const FVector MovementDirection = CurrentForwardDirection * InputAxisVector.Y + CurrentRightDirection * InputAxisVector.X;
 	GetPawn()->AddMovementInput(MovementDirection.GetSafeNormal());
+}
+
+void AAuraPlayerController::CursorTrace()
+{
+	FHitResult CursorHit;
+	GetHitResultUnderCursor(ECC_Camera, false, CursorHit);
+	if (!CursorHit.bBlockingHit) return;
+
+	Highlight(CursorHit.GetActor());
+}
+
+void AAuraPlayerController::Highlight(AActor* Target)
+{
+	LastHighlightable = CurrentHighlightable;
+	CurrentHighlightable = Target;
+
+	if (LastHighlightable != CurrentHighlightable)
+	{
+		if (LastHighlightable)
+		{
+			LastHighlightable->Unhighlight();
+		}
+
+		if (CurrentHighlightable)
+		{
+			CurrentHighlightable->Highlight();
+		}
+	}
 }
