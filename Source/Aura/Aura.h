@@ -4,3 +4,4 @@
 
 #include "CoreMinimal.h"
 
+#define CUSTOM_DEPTH_HIGHLIGHT_RED 250

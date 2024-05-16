@@ -21,5 +21,7 @@ public:
 protected:
 	virtual void Tick(float DeltaSeconds) override;
 private:
+	
+	UPROPERTY(EditAnywhere, Category="Highlight")
 	bool bIsHighlighted = false;
 };
