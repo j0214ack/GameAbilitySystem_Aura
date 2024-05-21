@@ -18,4 +18,5 @@ class AURA_API AAuraCharacter : public AAuraCharacterBase
 
 private:
 	void InitializeAbilitySystem();
+	void InitializeHUD() const;
 };
