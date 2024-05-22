@@ -46,6 +46,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetWidgetControllerParams(const FWidgetControllerParams& InWidgetControllerParams);
 	virtual void BroadcastInitialValues() const {}
+	virtual void BindToAttributeChanges() const {}
 
 protected:
 	UPROPERTY(BlueprintReadOnly, Category = "Aura|WidgetController")

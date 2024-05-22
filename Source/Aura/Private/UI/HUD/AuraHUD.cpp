@@ -34,5 +34,6 @@ void AAuraHUD::InitOverlayWidgetController(const FWidgetControllerParams& Widget
 		checkf(OverlayWidgetControllerClass, TEXT("OverlayWidgetControllerClass is not set in %s"), *GetName());
 		OverlayWidgetController = NewObject<UOverlayWidgetController>(this, OverlayWidgetControllerClass);
 		OverlayWidgetController->SetWidgetControllerParams(WidgetControllerParams);
+		OverlayWidgetController->BindToAttributeChanges();
 	}
 }
