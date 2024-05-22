@@ -43,7 +43,7 @@ void AAuraEffectActor::OnSphereBeginOverlap(UPrimitiveComponent* OverlappedCompo
 	{
 		const UAuraAttributeSet* AttributeSet = Cast<UAuraAttributeSet>(AbilitySystemInterface->GetAbilitySystemComponent()->GetAttributeSet(UAuraAttributeSet::StaticClass()));
 		UAuraAttributeSet* MutableAttributeSet = const_cast<UAuraAttributeSet*>(AttributeSet);
-		MutableAttributeSet->SetHealth(MutableAttributeSet->GetHealth() + 25.0f);
+		MutableAttributeSet->SetMana(MutableAttributeSet->GetMana() - 25.0f);
 		Destroy();
 	}
 }
