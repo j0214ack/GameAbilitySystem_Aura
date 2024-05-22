@@ -24,11 +24,13 @@ public:
 	TObjectPtr<UAuraUserWidget> OverlayWidget;
 
 	UFUNCTION(BlueprintCallable)
-	UAuraWidgetController* GetOverlayWidgetController(const FWidgetControllerParams& WidgetControllerParams);
+	UAuraWidgetController* GetOverlayWidgetController();
 
 	void InitOverlay(APlayerController* PlayerController, APlayerState* PlayerState, UAbilitySystemComponent* AbilitySystemComponent, UAttributeSet* AttributeSet);
 
 private:
+	void InitOverlayWidgetController(const FWidgetControllerParams& WidgetControllerParams);
+	
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UAuraUserWidget> OverlayWidgetClass;
 
