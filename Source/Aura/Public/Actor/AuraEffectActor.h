@@ -16,6 +16,19 @@ enum class EEndOverlapPolicy : uint8
 	RemoveEffect
 };
 
+USTRUCT(BlueprintType)
+struct FEffectLevel
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	TSubclassOf<UGameplayEffect> Effect;
+
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float Level;
+};
+
 UCLASS()
 class AURA_API AAuraEffectActor : public AActor
 {
@@ -30,7 +43,7 @@ protected:
 	virtual void BeginPlay() override;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TArray<TSubclassOf<UGameplayEffect>> EffectsToApply;
+	TArray<FEffectLevel> EffectsToApply;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	EEndOverlapPolicy EndOverlapPolicy = EEndOverlapPolicy::RemoveEffect;

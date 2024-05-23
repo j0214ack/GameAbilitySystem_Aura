@@ -56,27 +56,27 @@ void AAuraEffectActor::OnEndOverlay(AActor* TargetActor)
 
 void AAuraEffectActor::ApplyEffects(UAbilitySystemComponent* TargetAbilitySystemComponent)
 {
-	for (TSubclassOf<UGameplayEffect>& EffectToApply : EffectsToApply)
+	for (FEffectLevel EffectToApply : EffectsToApply)
 	{
 		FGameplayEffectContextHandle EffectContextHandle = TargetAbilitySystemComponent->MakeEffectContext();
 		EffectContextHandle.AddSourceObject(this);
-		FGameplayEffectSpecHandle EffectSpecHandle = TargetAbilitySystemComponent->MakeOutgoingSpec(EffectToApply, 1, EffectContextHandle);
+		FGameplayEffectSpecHandle EffectSpecHandle = TargetAbilitySystemComponent->MakeOutgoingSpec(EffectToApply.Effect, EffectToApply.Level, EffectContextHandle);
 		TargetAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
 	}
 }
 
 void AAuraEffectActor::RemoveEffects(UAbilitySystemComponent* TargetAbilitySystemComponent)
 {
-	for (TSubclassOf<UGameplayEffect>& EffectToApply : EffectsToApply)
+	for (FEffectLevel EffectToApply : EffectsToApply)
 	{
-		if (EffectToApply.GetDefaultObject()->DurationPolicy != EGameplayEffectDurationType::Infinite)
+		if (EffectToApply.Effect.GetDefaultObject()->DurationPolicy != EGameplayEffectDurationType::Infinite)
 		{
 			return;
 		}
 		
 		FGameplayEffectQuery Query;
 		Query.EffectSource = this;
-		Query.EffectDefinition = EffectToApply;
+		Query.EffectDefinition = EffectToApply.Effect;
 		TArray<FActiveGameplayEffectHandle> EffectHandles;
 		EffectHandles = TargetAbilitySystemComponent->GetActiveEffects(Query);
 		for (FActiveGameplayEffectHandle& EffectHandle : EffectHandles)
