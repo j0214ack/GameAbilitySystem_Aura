@@ -4,10 +4,12 @@
 #include "Character/AuraCharacter.h"
 
 #include "AbilitySystemComponent.h"
-#include "Kismet/GameplayStatics.h"
+#include "Player/AuraPlayerController.h"
 #include "Player/AuraPlayerState.h"
 #include "UI/HUD/AuraHUD.h"
 
+// Only called on the server (or in standalone).
+// See: https://docs.unrealengine.com/4.27/en-US/API/Runtime/Engine/GameFramework/APawn/PossessedBy/
 void AAuraCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
@@ -37,7 +39,7 @@ void AAuraCharacter::InitializeAbilitySystem()
 
 void AAuraCharacter::InitializeHUD() const
 {
-	if (APlayerController* PlayerController = UGameplayStatics::GetPlayerController(GetWorld(), 0))
+	if (APlayerController* PlayerController = Cast<AAuraPlayerController>(GetController()))
 	{
 		if (AAuraHUD* HUD = Cast<AAuraHUD>(PlayerController->GetHUD()))
 		{
