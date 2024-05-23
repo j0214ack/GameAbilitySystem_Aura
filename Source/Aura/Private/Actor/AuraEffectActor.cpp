@@ -1,7 +1,7 @@
 #include "Actor/AuraEffectActor.h"
 #include "AbilitySystemBlueprintLibrary.h"
 #include "AbilitySystemComponent.h"
-#include "AbilitySystemInterface.h"
+#include "GameplayEffect.h"
 
 // Sets default values
 AAuraEffectActor::AAuraEffectActor()
@@ -18,7 +18,7 @@ void AAuraEffectActor::BeginPlay()
 
 }
 
-void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor)
+void AAuraEffectActor::OnOverlay(AActor* TargetActor)
 {
 	UAbilitySystemComponent* TargetAbilitySystemComponent =	UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
 	if (TargetAbilitySystemComponent == nullptr)
@@ -26,11 +26,62 @@ void AAuraEffectActor::ApplyEffectToTarget(AActor* TargetActor)
 		return;
 	}
 
-	checkf(EffectToApply, TEXT("EffectToApply is not set in AuraEffectActor %s"), *GetName());
-	FGameplayEffectContextHandle EffectContextHandle = TargetAbilitySystemComponent->MakeEffectContext();
-	EffectContextHandle.AddSourceObject(this);
-	FGameplayEffectSpecHandle EffectSpecHandle = TargetAbilitySystemComponent->MakeOutgoingSpec(EffectToApply, 1, EffectContextHandle);
-	// TargetAbilitySystemComponent->ApplyGameplayEffectToSelf(EffectToApply.GetDefaultObject(), 1, FGameplayEffectContextHandle());
-	TargetAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
+	checkf(EffectsToApply.Num() > 0, TEXT("EffectsToApply is not set in AuraEffectActor %s"), *GetName());
+
+	ApplyEffects(TargetAbilitySystemComponent);
+
+	if (bDestroyAfterApply)
+	{
+		Destroy();
+	}
 }
 
+void AAuraEffectActor::OnEndOverlay(AActor* TargetActor)
+{
+	if (EndOverlapPolicy == EEndOverlapPolicy::None)
+	{
+		return;
+	}
+	
+	UAbilitySystemComponent* TargetAbilitySystemComponent =	UAbilitySystemBlueprintLibrary::GetAbilitySystemComponent(TargetActor);
+	if (TargetAbilitySystemComponent == nullptr)
+	{
+		return;
+	}
+	
+	checkf(EffectsToApply.Num() > 0, TEXT("EffectsToApply is not set in AuraEffectActor %s"), *GetName());
+
+	RemoveEffects(TargetAbilitySystemComponent);
+}
+
+void AAuraEffectActor::ApplyEffects(UAbilitySystemComponent* TargetAbilitySystemComponent)
+{
+	for (TSubclassOf<UGameplayEffect>& EffectToApply : EffectsToApply)
+	{
+		FGameplayEffectContextHandle EffectContextHandle = TargetAbilitySystemComponent->MakeEffectContext();
+		EffectContextHandle.AddSourceObject(this);
+		FGameplayEffectSpecHandle EffectSpecHandle = TargetAbilitySystemComponent->MakeOutgoingSpec(EffectToApply, 1, EffectContextHandle);
+		TargetAbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
+	}
+}
+
+void AAuraEffectActor::RemoveEffects(UAbilitySystemComponent* TargetAbilitySystemComponent)
+{
+	for (TSubclassOf<UGameplayEffect>& EffectToApply : EffectsToApply)
+	{
+		if (EffectToApply.GetDefaultObject()->DurationPolicy != EGameplayEffectDurationType::Infinite)
+		{
+			return;
+		}
+		
+		FGameplayEffectQuery Query;
+		Query.EffectSource = this;
+		Query.EffectDefinition = EffectToApply;
+		TArray<FActiveGameplayEffectHandle> EffectHandles;
+		EffectHandles = TargetAbilitySystemComponent->GetActiveEffects(Query);
+		for (FActiveGameplayEffectHandle& EffectHandle : EffectHandles)
+		{
+			TargetAbilitySystemComponent->RemoveActiveGameplayEffect(EffectHandle);
+		}
+	}
+}

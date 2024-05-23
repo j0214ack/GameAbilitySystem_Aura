@@ -6,7 +6,15 @@
 #include "GameFramework/Actor.h"
 #include "AuraEffectActor.generated.h"
 
+class UAbilitySystemComponent;
 class UGameplayEffect;
+
+UENUM(BlueprintType)
+enum class EEndOverlapPolicy : uint8
+{
+	None,
+	RemoveEffect
+};
 
 UCLASS()
 class AURA_API AAuraEffectActor : public AActor
@@ -22,8 +30,21 @@ protected:
 	virtual void BeginPlay() override;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	TSubclassOf<UGameplayEffect> EffectToApply;
+	TArray<TSubclassOf<UGameplayEffect>> EffectsToApply;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	EEndOverlapPolicy EndOverlapPolicy = EEndOverlapPolicy::RemoveEffect;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bDestroyAfterApply = true;
 	
 	UFUNCTION(BlueprintCallable)
-	void ApplyEffectToTarget(AActor* TargetActor);
+	void OnOverlay(AActor* TargetActor);
+
+	UFUNCTION(BlueprintCallable)
+	void OnEndOverlay(AActor* TargetActor);
+
+private:
+	void ApplyEffects(UAbilitySystemComponent* TargetAbilitySystemComponent);
+	void RemoveEffects(UAbilitySystemComponent* TargetAbilitySystemComponent);
 };
