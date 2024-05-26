@@ -6,6 +6,8 @@
 #include "UI/Widget/AuraWidgetController.h"
 #include "OverlayWidgetController.generated.h"
 
+struct FGameplayEffectSpec;
+struct FActiveGameplayEffectHandle;
 struct FOnAttributeChangeData;
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChangedSignature, float, NewHealth);
 DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxHealthChangedSignature, float, NewMaxHealth);
@@ -39,5 +41,7 @@ class AURA_API UOverlayWidgetController : public UAuraWidgetController
 	void OnMaxHealthAttributeChanged(const FOnAttributeChangeData& Data) const;
 	void OnManaAttributeChanged(const FOnAttributeChangeData& Data) const;
 	void OnMaxManaAttributeChanged(const FOnAttributeChangeData& Data) const;
-	
+
+	void OnGameplayEffectApplied(UAbilitySystemComponent* AppliedASC, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle EffectHandle) const;
+	void OnMessageTagReceived(const FGameplayTag& MessageTag) const;
 };

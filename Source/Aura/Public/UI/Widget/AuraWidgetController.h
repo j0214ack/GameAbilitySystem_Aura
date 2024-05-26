@@ -3,8 +3,10 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameplayTagContainer.h"
 #include "AuraWidgetController.generated.h"
 
+class UAuraUserWidget;
 class UAbilitySystemComponent;
 class UAttributeSet;
 
@@ -35,6 +37,27 @@ struct FWidgetControllerParams
 	TObjectPtr<UAttributeSet> AttributeSet = nullptr;
 };
 
+USTRUCT(BlueprintType)
+struct FMessageTagUIWidgetRow : public FTableRowBase
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Aura|WidgetController")
+	FGameplayTag MessageTag = FGameplayTag::EmptyTag;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Aura|WidgetController")
+	FText Message;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = "Aura|WidgetController")
+	TSubclassOf<UAuraUserWidget> WidgetClass;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Aura|WidgetController")
+	UTexture2D* Icon = nullptr;
+};
+
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_TwoParams(FOnMessageTagAddedSignature, const FGameplayTag&, Tag,
+                                             const FMessageTagUIWidgetRow&, WidgetData);
+
 /**
  * 
  */
@@ -60,4 +83,10 @@ protected:
 	
 	UPROPERTY(BlueprintReadOnly, Category = "Aura|WidgetController")
 	TObjectPtr<UAttributeSet> AttributeSet;
+
+	UPROPERTY(EditDefaultsOnly, Category = "Aura|WidgetController|GameplayTags Widget Data")
+	TObjectPtr<UDataTable> MessageTagUIWidgetTable;
+
+	UPROPERTY(BlueprintAssignable, Category = "Aura|WidgetController|GameplayTags Widget Data")
+	FOnMessageTagAddedSignature OnMessageTagReceivedDelegate;
 };

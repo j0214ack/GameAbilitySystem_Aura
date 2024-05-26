@@ -35,6 +35,8 @@ void UOverlayWidgetController::BindToAttributeChanges() const
 	AbilitySystemComponent
 		->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetMaxManaAttribute())
 		.AddUObject(this, &UOverlayWidgetController::OnMaxManaAttributeChanged);
+	
+	AbilitySystemComponent->OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UOverlayWidgetController::OnGameplayEffectApplied);
 }
 
 void UOverlayWidgetController::OnHealthAttributeChanged(const FOnAttributeChangeData& Data) const
@@ -55,4 +57,30 @@ void UOverlayWidgetController::OnManaAttributeChanged(const FOnAttributeChangeDa
 void UOverlayWidgetController::OnMaxManaAttributeChanged(const FOnAttributeChangeData& Data) const
 {
 	OnMaxManaChangedDelegate.Broadcast(Data.NewValue);
+}
+
+void UOverlayWidgetController::OnGameplayEffectApplied(UAbilitySystemComponent* AppliedASC, const FGameplayEffectSpec& EffectSpec,
+	FActiveGameplayEffectHandle EffectHandle) const
+{
+	// get tag name
+	FGameplayTagContainer EffectTags;
+	EffectSpec.GetAllAssetTags(EffectTags);
+	
+	for (const FGameplayTag& EffectTag : EffectTags)
+	{
+		// if TagName starts with "Message."
+		if (EffectTag.MatchesTag(FGameplayTag::RequestGameplayTag(FName("Message"), true)))
+		{
+			OnMessageTagReceived(EffectTag);
+		}
+	}
+}
+
+void UOverlayWidgetController::OnMessageTagReceived(const FGameplayTag& MessageTag) const
+{
+	FMessageTagUIWidgetRow* MessageTagUIWidgetRow = MessageTagUIWidgetTable->FindRow<FMessageTagUIWidgetRow>(
+		MessageTag.GetTagName(), TEXT(""));
+
+	UE_LOG(LogTemp, Warning, TEXT("MessageTag: %s"), *MessageTag.GetTagName().ToString());
+	OnMessageTagReceivedDelegate.Broadcast(MessageTag, *MessageTagUIWidgetRow);
 }
