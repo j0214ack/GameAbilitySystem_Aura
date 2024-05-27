@@ -22,41 +22,21 @@ void UOverlayWidgetController::BindToAttributeChanges() const
 
 	AbilitySystemComponent
 		->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetHealthAttribute())
-		.AddUObject(this, &UOverlayWidgetController::OnHealthAttributeChanged);
+		.AddLambda([this](const FOnAttributeChangeData& Data) { OnHealthChangedDelegate.Broadcast(Data.NewValue); });
 	
 	AbilitySystemComponent
 		->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetMaxHealthAttribute())
-		.AddUObject(this, &UOverlayWidgetController::OnMaxHealthAttributeChanged);
+		.AddLambda([this](const FOnAttributeChangeData& Data) { OnMaxHealthChangedDelegate.Broadcast(Data.NewValue); });
 
 	AbilitySystemComponent
 		->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetManaAttribute())
-		.AddUObject(this, &UOverlayWidgetController::OnManaAttributeChanged);
+		.AddLambda([this](const FOnAttributeChangeData& Data) { OnManaChangedDelegate.Broadcast(Data.NewValue); });
 
 	AbilitySystemComponent
 		->GetGameplayAttributeValueChangeDelegate(AuraAttributeSet->GetMaxManaAttribute())
-		.AddUObject(this, &UOverlayWidgetController::OnMaxManaAttributeChanged);
+		.AddLambda([this](const FOnAttributeChangeData& Data) { OnMaxManaChangedDelegate.Broadcast(Data.NewValue); });
 	
 	AbilitySystemComponent->OnGameplayEffectAppliedDelegateToSelf.AddUObject(this, &UOverlayWidgetController::OnGameplayEffectApplied);
-}
-
-void UOverlayWidgetController::OnHealthAttributeChanged(const FOnAttributeChangeData& Data) const
-{
-	OnHealthChangedDelegate.Broadcast(Data.NewValue);
-}
-
-void UOverlayWidgetController::OnMaxHealthAttributeChanged(const FOnAttributeChangeData& Data) const
-{
-	OnMaxHealthChangedDelegate.Broadcast(Data.NewValue);
-}
-
-void UOverlayWidgetController::OnManaAttributeChanged(const FOnAttributeChangeData& Data) const
-{
-	OnManaChangedDelegate.Broadcast(Data.NewValue);
-}
-
-void UOverlayWidgetController::OnMaxManaAttributeChanged(const FOnAttributeChangeData& Data) const
-{
-	OnMaxManaChangedDelegate.Broadcast(Data.NewValue);
 }
 
 void UOverlayWidgetController::OnGameplayEffectApplied(UAbilitySystemComponent* AppliedASC, const FGameplayEffectSpec& EffectSpec,

@@ -9,10 +9,7 @@
 struct FGameplayEffectSpec;
 struct FActiveGameplayEffectHandle;
 struct FOnAttributeChangeData;
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnHealthChangedSignature, float, NewHealth);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxHealthChangedSignature, float, NewMaxHealth);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnManaChangedSignature, float, NewMana);
-DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnMaxManaChangedSignature, float, NewMaxMana);
+DECLARE_DYNAMIC_MULTICAST_DELEGATE_OneParam(FOnAttributeChangedSignature, float, NewValue);
 
 /**
  * 
@@ -26,21 +23,16 @@ class AURA_API UOverlayWidgetController : public UAuraWidgetController
 	virtual void BindToAttributeChanges() const override;
 
 	UPROPERTY(BlueprintAssignable,  Category="GAS|Attributes")
-	FOnHealthChangedSignature OnHealthChangedDelegate;
+	FOnAttributeChangedSignature OnHealthChangedDelegate;
 
 	UPROPERTY(BlueprintAssignable,  Category="GAS|Attributes")
-	FOnMaxHealthChangedSignature OnMaxHealthChangedDelegate;
+	FOnAttributeChangedSignature OnMaxHealthChangedDelegate;
 	
 	UPROPERTY(BlueprintAssignable,  Category="GAS|Attributes")
-	FOnManaChangedSignature OnManaChangedDelegate;
+	FOnAttributeChangedSignature OnManaChangedDelegate;
 
 	UPROPERTY(BlueprintAssignable,  Category="GAS|Attributes")
-	FOnMaxManaChangedSignature OnMaxManaChangedDelegate;
-
-	void OnHealthAttributeChanged(const FOnAttributeChangeData& Data) const;
-	void OnMaxHealthAttributeChanged(const FOnAttributeChangeData& Data) const;
-	void OnManaAttributeChanged(const FOnAttributeChangeData& Data) const;
-	void OnMaxManaAttributeChanged(const FOnAttributeChangeData& Data) const;
+	FOnAttributeChangedSignature OnMaxManaChangedDelegate;
 
 	void OnGameplayEffectApplied(UAbilitySystemComponent* AppliedASC, const FGameplayEffectSpec& EffectSpec, FActiveGameplayEffectHandle EffectHandle) const;
 	void OnMessageTagReceived(const FGameplayTag& MessageTag) const;
