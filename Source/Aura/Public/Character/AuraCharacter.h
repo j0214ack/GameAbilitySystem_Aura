@@ -17,6 +17,10 @@ class AURA_API AAuraCharacter : public AAuraCharacterBase
 	virtual void PossessedBy(AController* NewController) override;
 	virtual void OnRep_PlayerState() override;
 
+public:
+	/** Combat Interface */
+	virtual int32 GetCharacterLevel() override;
+
 protected:
 	UPROPERTY(EditAnywhere)
 	TArray<TSubclassOf<UGameplayEffect>> OnSpawnEffects;

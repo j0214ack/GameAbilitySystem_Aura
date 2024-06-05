@@ -16,13 +16,23 @@ class AURA_API AAuraEnemy : public AAuraCharacterBase, public IHighlightableInte
 	GENERATED_BODY()
 public:
 	AAuraEnemy();
+	/** Highlightable Interface */
 	virtual void Highlight() override;
 	virtual void Unhighlight() override;
+	
+	/** Combat Interface */
+	virtual int32 GetCharacterLevel() override { return Level; }
+	
 protected:
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void BeginPlay() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Character Class Default")
+	int32 Level = 1;
+	
 private:
 	
 	UPROPERTY(EditAnywhere, Category="Highlight")
 	bool bIsHighlighted = false;
+
 };
