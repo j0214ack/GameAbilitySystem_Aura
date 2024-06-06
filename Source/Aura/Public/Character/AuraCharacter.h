@@ -21,12 +21,7 @@ public:
 	/** Combat Interface */
 	virtual int32 GetCharacterLevel() override;
 
-protected:
-	UPROPERTY(EditAnywhere)
-	TArray<TSubclassOf<UGameplayEffect>> OnSpawnEffects;
-
 private:
 	void InitializeAbilitySystem();
 	void InitializeHUD() const;
-	void ApplyOnSpawnEffects();
 };

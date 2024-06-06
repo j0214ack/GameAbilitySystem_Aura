@@ -35,7 +35,7 @@ protected:
 
 private:
 	UPROPERTY(VisibleAnywhere, ReplicatedUsing=OnRep_PlayerLevel)
-	int32 PlayerLevel;
+	int32 PlayerLevel = 1;
 
 	UFUNCTION()
 	void OnRep_PlayerLevel(int32 OldLevel);

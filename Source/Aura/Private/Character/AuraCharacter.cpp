@@ -56,13 +56,3 @@ void AAuraCharacter::InitializeHUD() const
 	}
 }
 
-void AAuraCharacter::ApplyOnSpawnEffects()
-{
-	for (const TSubclassOf<UGameplayEffect> Effect : OnSpawnEffects)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Applying effect %s"), *Effect->GetName());
-		const FGameplayEffectContextHandle Context = AbilitySystemComponent->MakeEffectContext();
-		const FGameplayEffectSpecHandle EffectSpecHandle = AbilitySystemComponent->MakeOutgoingSpec(Effect, 1, Context);
-		AbilitySystemComponent->ApplyGameplayEffectSpecToSelf(*EffectSpecHandle.Data.Get());
-	}
-}
