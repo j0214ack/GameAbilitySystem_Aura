@@ -51,7 +51,7 @@ void AAuraCharacter::InitializeHUD() const
 	{
 		if (AAuraHUD* HUD = Cast<AAuraHUD>(PlayerController->GetHUD()))
 		{
-			HUD->InitOverlay(PlayerController, GetPlayerState(), AbilitySystemComponent, AttributeSet);
+			HUD->Init(PlayerController, GetPlayerState(), AbilitySystemComponent, AttributeSet);
 		}
 	}
 }

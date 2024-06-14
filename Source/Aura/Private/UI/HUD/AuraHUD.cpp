@@ -2,6 +2,8 @@
 
 
 #include "UI/HUD/AuraHUD.h"
+
+#include "UI/Widget/AttributesMenuWidgetController.h"
 #include "UI/Widget/AuraUserWidget.h"
 #include "UI/Widget/OverlayWidgetController.h"
 #include "UI/Widget/AuraWidgetController.h"
@@ -12,20 +14,18 @@ UAuraWidgetController* AAuraHUD::GetOverlayWidgetController()
 	return OverlayWidgetController;
 }
 
-void AAuraHUD::InitOverlay(APlayerController* PlayerController, APlayerState* PlayerState,
-	UAbilitySystemComponent* AbilitySystemComponent, UAttributeSet* AttributeSet)
+UAttributesMenuWidgetController* AAuraHUD::GetAttributesMenuWidgetController()
 {
-	checkf(OverlayWidgetClass, TEXT("OverlayWidgetClass is not set in %s"), *GetName());
-	
-	OverlayWidget = CreateWidget<UAuraUserWidget>(GetWorld(), OverlayWidgetClass);
-	
+	checkf(AttributesMenuWidgetController, TEXT("AttributesMenuWidgetController is not set in %s"), *GetName());
+	return AttributesMenuWidgetController;
+}
+
+void AAuraHUD::Init(APlayerController* PlayerController, APlayerState* PlayerState,
+                    UAbilitySystemComponent* AbilitySystemComponent, UAttributeSet* AttributeSet)
+{
 	const FWidgetControllerParams WidgetControllerParams(PlayerController, PlayerState, AbilitySystemComponent, AttributeSet);
-	InitOverlayWidgetController(WidgetControllerParams);
-	
-	OverlayWidget->SetWidgetController(OverlayWidgetController);
-	OverlayWidgetController->BroadcastInitialValues();
-	OverlayWidget->AddToViewport();
-	
+	InitOverlayWidget(WidgetControllerParams);
+	InitAttributesMenuWidgetController(WidgetControllerParams);
 }
 
 void AAuraHUD::InitOverlayWidgetController(const FWidgetControllerParams& WidgetControllerParams)
@@ -37,4 +37,28 @@ void AAuraHUD::InitOverlayWidgetController(const FWidgetControllerParams& Widget
 		OverlayWidgetController->SetWidgetControllerParams(WidgetControllerParams);
 		OverlayWidgetController->BindToAttributeChanges();
 	}
+}
+
+void AAuraHUD::InitAttributesMenuWidgetController(const FWidgetControllerParams& WidgetControllerParams)
+{
+	if (AttributesMenuWidgetController == nullptr)
+	{
+		checkf(AttributesMenuWidgetControllerClass, TEXT("AttributesMenuWidgetControllerClass is not set in %s"), *GetName());
+		AttributesMenuWidgetController = NewObject<UAttributesMenuWidgetController>(this, AttributesMenuWidgetControllerClass);
+		AttributesMenuWidgetController->SetWidgetControllerParams(WidgetControllerParams);
+		AttributesMenuWidgetController->BindToAttributeChanges();
+	}
+}
+
+void AAuraHUD::InitOverlayWidget(const FWidgetControllerParams& WidgetControllerParams)
+{
+	checkf(OverlayWidgetClass, TEXT("OverlayWidgetClass is not set in %s"), *GetName());
+	
+	OverlayWidget = CreateWidget<UAuraUserWidget>(GetWorld(), OverlayWidgetClass);
+	
+	InitOverlayWidgetController(WidgetControllerParams);
+	
+	OverlayWidget->SetWidgetController(OverlayWidgetController);
+	OverlayWidgetController->BroadcastInitialValues();
+	OverlayWidget->AddToViewport();
 }
